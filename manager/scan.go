@@ -1,0 +1,33 @@
+package manager
+
+import (
+	"fmt"
+	"io/ioutil"
+)
+
+func scan(d string) (map[string][]string, error) {
+	var ds = make(map[string][]string)
+	files, err := ioutil.ReadDir(d)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range files {
+		if f.IsDir() {
+			dFiles, err := ioutil.ReadDir(fmt.Sprintf("%s/%s", d, f.Name()))
+			if err != nil {
+				return nil, err
+			}
+
+			for _, df := range dFiles {
+				if !df.IsDir() { // ignore nested directories
+					ds[f.Name()] = append(ds[f.Name()], df.Name())
+				}
+			}
+		} else {
+			ds[defaultDirName] = append(ds[defaultDirName], f.Name())
+		}
+	}
+
+	return ds, err
+}
