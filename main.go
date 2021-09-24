@@ -1,6 +1,10 @@
 package main
 
 import (
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 	"log"
 	"lorem/api"
 	"lorem/image"
@@ -8,11 +12,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
 func init() {
@@ -30,6 +29,8 @@ func init() {
 	if err != nil {
 		log.Panic("failed to bind flags")
 	}
+
+	viper.AutomaticEnv()
 }
 
 func main() {
