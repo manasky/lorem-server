@@ -71,6 +71,7 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 
 	img, err := image.Decode(file)
 	if err != nil {
+		log.Printf("unable to decode image: %s", err)
 		handleError(w, http.StatusInternalServerError, "internal error")
 		return
 	}
@@ -80,7 +81,7 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 
 	buffer := new(bytes.Buffer)
 	if err := jpeg.Encode(buffer, *img, nil); err != nil {
-		log.Println("unable to encode image.")
+		log.Printf("unable to encode image: %s", err)
 		return
 	}
 
