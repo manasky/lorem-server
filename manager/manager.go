@@ -12,8 +12,8 @@ const (
 
 type Manager struct {
 	base string
-	ds map[string][]string
-	mc []string // index of categories
+	ds   map[string][]string
+	mc   []string // index of categories
 }
 
 func New(dir string) (*Manager, error) {
@@ -29,11 +29,10 @@ func New(dir string) (*Manager, error) {
 
 	return &Manager{
 		base: dir,
-		ds: ds,
-		mc: mc,
+		ds:   ds,
+		mc:   mc,
 	}, nil
 }
-
 
 func (m *Manager) Pick(cat string) string {
 	if cat == "" {

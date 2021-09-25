@@ -19,8 +19,8 @@ import (
 type Options struct {
 	CacheFiles bool
 
-	MinWidth int
-	MaxWidth int
+	MinWidth  int
+	MaxWidth  int
 	MinHeight int
 	MaxHeight int
 }
@@ -32,18 +32,18 @@ const (
 
 type API struct {
 	mngr *manager.Manager
-	pr image.Processor
-	opt *Options
+	pr   image.Processor
+	opt  *Options
 }
 
 func New(manager *manager.Manager, imageProcessor image.Processor, options *Options) *API {
 	if options == nil {
 		options = &Options{
 			CacheFiles: true,
-			MinWidth: minSize,
-			MinHeight: minSize,
-			MaxWidth: maxSize,
-			MaxHeight: maxSize,
+			MinWidth:   minSize,
+			MinHeight:  minSize,
+			MaxWidth:   maxSize,
+			MaxHeight:  maxSize,
 		}
 	} else {
 		if options.MinWidth == 0 {
@@ -65,8 +65,8 @@ func New(manager *manager.Manager, imageProcessor image.Processor, options *Opti
 
 	return &API{
 		mngr: manager,
-		pr: imageProcessor,
-		opt: options,
+		pr:   imageProcessor,
+		opt:  options,
 	}
 }
 
@@ -198,11 +198,11 @@ func cacheFile(cp string, i []byte) error {
 
 func cachePath(file string, width, height int) string {
 	tmp := strings.Split(file, "/")
-	tmp[len(tmp) - 1] = fmt.Sprintf("%s/%dx%d/%s", ".cache", width, height, tmp[len(tmp) - 1])
+	tmp[len(tmp)-1] = fmt.Sprintf("%s/%dx%d/%s", ".cache", width, height, tmp[len(tmp)-1])
 	return strings.Join(tmp, "/")
 }
 
 func path(file string) string {
 	tmp := strings.Split(file, "/")
-	return strings.Join(tmp[:len(tmp) - 1], "/")
+	return strings.Join(tmp[:len(tmp)-1], "/")
 }
