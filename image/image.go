@@ -7,6 +7,7 @@ import (
 
 type Processor interface {
 	CropCenter(img image.Image, width, height int) *image.Image
+	Resize(img image.Image, width, height int) *image.Image
 }
 
 func Decode(name string) (*image.Image, error) {
