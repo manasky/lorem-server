@@ -13,7 +13,7 @@ func scan(d string) (map[string][]string, error) {
 	}
 
 	for _, f := range files {
-		if isSystemFile(f.Name())  { // ignore system files
+		if isSystemFile(f.Name()) { // ignore system files
 			continue
 		}
 

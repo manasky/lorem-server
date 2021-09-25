@@ -26,8 +26,8 @@ type Options struct {
 }
 
 const (
-	minSize = 8
-	maxSize = 2000
+	minSize    = 8
+	maxSize    = 2000
 	normalSize = 500
 )
 

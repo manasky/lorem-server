@@ -8,7 +8,7 @@ import (
 
 const (
 	defaultDirName = "__root"
-	CacheDir = ".cache"
+	CacheDir       = ".cache"
 )
 
 type Manager struct {
