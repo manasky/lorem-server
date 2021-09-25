@@ -13,6 +13,10 @@ func scan(d string) (map[string][]string, error) {
 	}
 
 	for _, f := range files {
+		if isSystemFile(f.Name())  { // ignore system files
+			continue
+		}
+
 		if f.IsDir() {
 			dFiles, err := ioutil.ReadDir(fmt.Sprintf("%s/%s", d, f.Name()))
 			if err != nil {
@@ -21,6 +25,9 @@ func scan(d string) (map[string][]string, error) {
 
 			for _, df := range dFiles {
 				if !df.IsDir() { // ignore nested directories
+					if isSystemFile(df.Name()) { // ignore system files
+						continue
+					}
 					ds[f.Name()] = append(ds[f.Name()], df.Name())
 				}
 			}
@@ -30,4 +37,11 @@ func scan(d string) (map[string][]string, error) {
 	}
 
 	return ds, err
+}
+
+func isSystemFile(name string) bool {
+	if name[:1] == "." {
+		return true
+	}
+	return false
 }

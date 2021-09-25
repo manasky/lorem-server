@@ -216,7 +216,7 @@ func cacheFile(cp string, i []byte) error {
 
 func cachePath(file string, width, height int) string {
 	tmp := strings.Split(file, "/")
-	tmp[len(tmp)-1] = fmt.Sprintf("%s/%dx%d/%s", ".cache", width, height, tmp[len(tmp)-1])
+	tmp[len(tmp)-1] = fmt.Sprintf("%s/%dx%d/%s", manager.CacheDir, width, height, tmp[len(tmp)-1])
 	return strings.Join(tmp, "/")
 }
 
