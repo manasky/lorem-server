@@ -57,14 +57,14 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	width, err := strconv.ParseInt(vars["width"], 10, 32)
-	if err != nil || width < 8 {
+	width, err := strconv.Atoi(vars["width"])
+	if err != nil || width < a.opt.MinWidth || width > a.opt.MaxWidth {
 		handleError(w, http.StatusBadRequest, "invalid width size")
 		return
 	}
 
-	height, err := strconv.ParseInt(vars["height"], 10, 32)
-	if err != nil || height < 8 {
+	height, err := strconv.Atoi(vars["height"])
+	if err != nil || height < a.opt.MinHeight || height > a.opt.MaxHeight {
 		handleError(w, http.StatusBadRequest, "invalid height size")
 		return
 	}
@@ -76,8 +76,7 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	img = a.pr.CropCenter(*img, int(width), int(height))
-
+	img = a.pr.CropCenter(*img, width, height)
 
 	buffer := new(bytes.Buffer)
 	if err := jpeg.Encode(buffer, *img, nil); err != nil {
