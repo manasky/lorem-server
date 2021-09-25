@@ -50,6 +50,7 @@ func New(manager *manager.Manager, imageProcessor image.Processor, options *Opti
 	return &API{
 		mngr: manager,
 		pr: imageProcessor,
+		opt: options,
 	}
 }
 
