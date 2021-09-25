@@ -102,7 +102,6 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 
 	if width == 0 && height == 0 {
 		width = normalSize
-		height = normalSize
 	}
 
 	if a.opt.CacheFiles {
