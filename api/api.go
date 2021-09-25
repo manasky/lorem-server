@@ -124,7 +124,7 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if height != 0 {
+	if height != 0 && width != 0 {
 		img = a.pr.CropCenter(*img, width, height)
 	} else {
 		img = a.pr.Resize(*img, width, height)
