@@ -45,6 +45,22 @@ func New(manager *manager.Manager, imageProcessor image.Processor, options *Opti
 			MaxWidth: maxSize,
 			MaxHeight: maxSize,
 		}
+	} else {
+		if options.MinWidth == 0 {
+			options.MinWidth = minSize
+		}
+
+		if options.MinHeight == 0 {
+			options.MinHeight = minSize
+		}
+
+		if options.MaxWidth == 0 {
+			options.MaxWidth = maxSize
+		}
+
+		if options.MaxHeight == 0 {
+			options.MaxHeight = maxSize
+		}
 	}
 
 	return &API{
