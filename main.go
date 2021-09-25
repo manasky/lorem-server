@@ -44,8 +44,8 @@ func main() {
 	a := api.New(m, &image.Imaging{}, nil)
 
 	r := mux.NewRouter()
-	r.HandleFunc("/{category}/{width:[0-9]+}/{height:[0-9]+}", a.SizeHandler).Methods(http.MethodGet)
-	r.HandleFunc("/{width:[0-9]+}/{height:[0-9]+}", a.SizeHandler).Methods(http.MethodGet)
+	r.HandleFunc("/image/{category}", a.SizeHandler).Methods(http.MethodGet)
+	r.HandleFunc("/image", a.SizeHandler).Methods(http.MethodGet)
 	r.PathPrefix("/").HandlerFunc(a.NotFound)
 
 	log.Printf("listening on %s", viper.GetString("host"))

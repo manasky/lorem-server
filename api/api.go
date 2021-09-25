@@ -28,6 +28,7 @@ type Options struct {
 const (
 	minSize = 8
 	maxSize = 2000
+	normalSize = 500
 )
 
 type API struct {
@@ -79,16 +80,29 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	width, err := strconv.Atoi(vars["width"])
-	if err != nil || width < a.opt.MinWidth || width > a.opt.MaxWidth {
-		handleError(w, http.StatusBadRequest, "invalid width size")
-		return
+	params := r.URL.Query()
+	var err error
+	var width int
+	if params.Get("w") != "" {
+		width, err = strconv.Atoi(params.Get("w"))
+		if err != nil || width < a.opt.MinWidth || width > a.opt.MaxWidth {
+			handleError(w, http.StatusBadRequest, "invalid width size")
+			return
+		}
 	}
 
-	height, err := strconv.Atoi(vars["height"])
-	if err != nil || height < a.opt.MinHeight || height > a.opt.MaxHeight {
-		handleError(w, http.StatusBadRequest, "invalid height size")
-		return
+	var height int
+	if params.Get("h") != "" {
+		height, err = strconv.Atoi(params.Get("h"))
+		if err != nil || height < a.opt.MinHeight || height > a.opt.MaxHeight {
+			handleError(w, http.StatusBadRequest, "invalid height size")
+			return
+		}
+	}
+
+	if width == 0 && height == 0 {
+		width = normalSize
+		height = normalSize
 	}
 
 	if a.opt.CacheFiles {
@@ -110,7 +124,11 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	img = a.pr.CropCenter(*img, width, height)
+	if height != 0 {
+		img = a.pr.CropCenter(*img, width, height)
+	} else {
+		img = a.pr.Resize(*img, width, height)
+	}
 
 	buffer := new(bytes.Buffer)
 	if err := jpeg.Encode(buffer, *img, nil); err != nil {
