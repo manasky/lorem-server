@@ -3,16 +3,22 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"image/jpeg"
+	"io/ioutil"
 	"log"
 	"lorem/image"
 	"lorem/manager"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 )
 
 type Options struct {
+	CacheFiles bool
+
 	MinWidth int
 	MaxWidth int
 	MinHeight int
@@ -33,6 +39,7 @@ type API struct {
 func New(manager *manager.Manager, imageProcessor image.Processor, options *Options) *API {
 	if options == nil {
 		options = &Options{
+			CacheFiles: true,
 			MinWidth: minSize,
 			MinHeight: minSize,
 			MaxWidth: maxSize,
@@ -47,8 +54,6 @@ func New(manager *manager.Manager, imageProcessor image.Processor, options *Opti
 }
 
 func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-
 	vars := mux.Vars(r)
 
 	file := a.mngr.Pick(vars["category"])
@@ -69,6 +74,18 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if a.opt.CacheFiles {
+		cp := cachePath(file, width, height)
+		if _, err := os.Stat(cp); err == nil {
+			log.Printf("cached file found: %s", file)
+			err = handleCacheFile(w, cp)
+			if err == nil {
+				return
+			}
+			log.Printf("error while writing cached file: %s", file)
+		}
+	}
+
 	img, err := image.Decode(file)
 	if err != nil {
 		log.Printf("unable to decode image: %s : %s", file, err)
@@ -84,16 +101,44 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if a.opt.CacheFiles {
+		go func() {
+			cp := cachePath(file, width, height)
+			err := cacheFile(cp, buffer.Bytes())
+			if err != nil {
+				log.Printf("error while caching file: %s : %v", cp, err)
+				return
+			}
+			log.Printf("file cached: %s", cp)
+		}()
+	}
+
 	w.Header().Set("Content-Type", "image/jpeg")
 	w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
 	if _, err := w.Write(buffer.Bytes()); err != nil {
-		log.Println("unable to write image.")
+		log.Printf("unable to write image: %v", err)
 		return
 	}
 }
 
 func (a *API) NotFound(w http.ResponseWriter, r *http.Request) {
 	handleError(w, http.StatusNotFound, "not found")
+}
+
+func handleCacheFile(w http.ResponseWriter, file string) error {
+	s, err := ioutil.ReadFile(file)
+	if err != nil {
+		return err
+	}
+
+	b := bytes.NewBuffer(s)
+
+	w.Header().Set("Content-Type", "image/jpeg")
+	w.Header().Set("Content-Length", strconv.Itoa(len(b.Bytes())))
+	if _, err := w.Write(b.Bytes()); err != nil {
+		return err
+	}
+	return nil
 }
 
 func handleError(w http.ResponseWriter, code int, msg string) {
@@ -110,4 +155,37 @@ func handleError(w http.ResponseWriter, code int, msg string) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Write(b)
 	return
+}
+
+func cacheFile(cp string, i []byte) error {
+	dir := path(cp)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err = os.MkdirAll(dir, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+
+	f, err := os.Create(cp)
+	if err != nil {
+		return err
+	}
+
+	_, err = f.Write(i)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func cachePath(file string, width, height int) string {
+	tmp := strings.Split(file, "/")
+	tmp[len(tmp) - 1] = fmt.Sprintf("%s/%dx%d/%s", ".cache", width, height, tmp[len(tmp) - 1])
+	return strings.Join(tmp, "/")
+}
+
+func path(file string) string {
+	tmp := strings.Split(file, "/")
+	return strings.Join(tmp[:len(tmp) - 1], "/")
 }
