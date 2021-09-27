@@ -23,6 +23,8 @@ type Options struct {
 	MaxWidth  int
 	MinHeight int
 	MaxHeight int
+
+	CDN string
 }
 
 const (
@@ -108,6 +110,12 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 		cp := cachePath(file, width, height)
 		if _, err := os.Stat(cp); err == nil {
 			log.Printf("cached file found: %s", file)
+
+			if a.opt.CDN != "" { // redirect to cdn
+				http.Redirect(w, r, fmt.Sprintf("%s/%s", a.opt.CDN, cp), 302)
+				return
+			}
+
 			err = handleCacheFile(w, cp)
 			if err == nil {
 				return
@@ -136,7 +144,19 @@ func (a *API) SizeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if a.opt.CacheFiles {
-		go func() {
+		if a.opt.CDN != "" { // store file & redirect to cdn
+			cp := cachePath(file, width, height)
+			err := cacheFile(cp, buffer.Bytes())
+			if err != nil {
+				log.Printf("error while caching file: %s : %v", cp, err)
+				return
+			}
+
+			http.Redirect(w, r, fmt.Sprintf("%s/%s", a.opt.CDN, cp), 302)
+			return
+		}
+
+		go func() { // store file in a goroutine
 			cp := cachePath(file, width, height)
 			err := cacheFile(cp, buffer.Bytes())
 			if err != nil {
