@@ -51,11 +51,19 @@ func (m *Manager) Total() int {
 }
 
 func (m *Manager) randomCategory() string {
+	if len(m.mc) == 0 {
+		return ""
+	}
+
 	rand.Seed(time.Now().UnixNano())
 	return m.mc[rand.Intn(len(m.mc))]
 }
 
 func (m *Manager) randomEntity(c string) string {
+	if len(m.mc) == 0 {
+		return ""
+	}
+
 	rand.Seed(time.Now().UnixNano())
 	if _, ok := m.ds[c]; !ok {
 		return ""
