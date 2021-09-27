@@ -19,6 +19,12 @@ func init() {
 
 	flags.String("host", "127.0.0.1:8080", "host:port for the HTTP server")
 	flags.String("dir", "./images", "directory of images")
+	flags.String("cache", "true", "cache processed files")
+	flags.String("cdn", "", "cdn domain (works only on cache mode). leave empty to serve the files by app")
+	flags.String("min-width", "8", "minimum supported width")
+	flags.String("min-height", "8", "minimum supported height")
+	flags.String("max-width", "2000", "maximum supported width")
+	flags.String("max-height", "2000", "maximum supported height")
 
 	err := flags.Parse(os.Args[1:])
 	if err != nil {
@@ -41,7 +47,14 @@ func main() {
 
 	log.Printf("%d items loaded", m.Total())
 
-	a := api.New(m, &image.Imaging{}, nil)
+	a := api.New(m, &image.Imaging{}, &api.Options{
+		CacheFiles: viper.GetBool("cache"),
+		CDN: viper.GetString("cdn"),
+		MinWidth: viper.GetInt("min-width"),
+		MaxWidth: viper.GetInt("max-width"),
+		MinHeight: viper.GetInt("min-height"),
+		MaxHeight: viper.GetInt("max-height"),
+	})
 
 	r := mux.NewRouter()
 	r.HandleFunc("/image/{category}", a.SizeHandler).Methods(http.MethodGet)
