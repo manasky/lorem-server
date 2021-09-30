@@ -14,7 +14,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: manasky/lorem-server
+          images: ghcr.io/manasky/lorem-server
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
