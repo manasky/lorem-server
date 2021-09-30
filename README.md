@@ -23,3 +23,8 @@ The backend of https://lorem.space lives here.
 * `max-width`: maximum supported width (integer)
 * `min-height`: minimum supported height (integer)
 * `max-height`: maximum supported height (integer)
+
+### Docker
+You can pull & run the public docker image from github package registry:
+
+`$ docker pull ghcr.io/manasky/lorem-server:latest`
