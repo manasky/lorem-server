@@ -2,6 +2,8 @@ name: Publish Docker image
 on:
   release:
     types: [published]
+    tags:
+      - 'v*'
 jobs:
   push_to_registry:
     name: Push Docker image to GitHub Packages
@@ -9,6 +11,14 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: manasky/lorem-server
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v2
         with:
@@ -16,5 +26,5 @@ jobs:
           password: ${{ secrets.API_TOKEN_GITHUB }}
           registry: docker.pkg.github.com
           repository: manasky/lorem-server/lorem-server-image
-          tags: manasky/lorem-server/lorem-server-image:latest
-          tag_with_ref: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
