@@ -16,4 +16,5 @@ jobs:
           password: ${{ secrets.API_TOKEN_GITHUB }}
           registry: docker.pkg.github.com
           repository: manasky/lorem-server/lorem-server-image
+          tags: manasky/lorem-server/lorem-server-image:latest
           tag_with_ref: true
