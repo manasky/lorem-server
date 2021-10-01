@@ -31,3 +31,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: true
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+          repository: manasky/docker-compose
+          event-type: lorem-new-version
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
