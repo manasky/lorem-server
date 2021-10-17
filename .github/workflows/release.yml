@@ -1,3 +1,4 @@
+name: Release Go binaries
 on:
   release:
     types: [created]
