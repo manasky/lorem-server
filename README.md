@@ -28,7 +28,7 @@ The backend of https://lorem.space lives here.
 To run built binary, visit the [release page](https://github.com/manasky/lorem-server/releases) & download your OS build file. Unzip the downloaded file & make sure about the file execution permissions, then run the app with the arguments in the terminal:
 
 * MacOS & Linux: `./lorem-server --host "127.0.0.1:8080" --dir "~/Pictures"`
-* Windows: `lorem-server.exe -host "127.0.0.1:8080" -dir "C:\Users\USER\Pictures`
+* Windows: `lorem-server.exe -host "127.0.0.1:8080" -dir "C:\Users\USER\Pictures"`
 ### Docker
 You can pull & run the public docker image from github package registry:
 
