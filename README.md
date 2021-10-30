@@ -35,7 +35,7 @@ You can pull & run the public docker image from github package registry:
 `$ docker pull ghcr.io/manasky/lorem-server:latest`
 
 #### Run docker image:
-To run the container you must pass the app arguments via the `.env` file. To this, create a file named `.env` & set the options in uppercase & snail case format.
+To run the container you must pass the app arguments via the `.env` file. To this, create a file named `.env` & set the options in uppercase & snake case format.
 
 An example of .env file:
 ```
