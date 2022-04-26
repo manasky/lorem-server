@@ -15,7 +15,5 @@ WORKDIR /app
 
 COPY --from=build /app/bin/lorem /app/lorem
 
-USER 1000:1000
-
 EXPOSE 8080
 ENTRYPOINT ["./lorem"]
